@@ -1,14 +1,13 @@
 -- phpMyAdmin SQL Dump
--- version 5.0.1
+-- version 5.0.2
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Waktu pembuatan: 16 Bulan Mei 2020 pada 01.49
--- Versi server: 10.4.11-MariaDB
--- Versi PHP: 7.4.3
+-- Generation Time: May 20, 2020 at 07:05 AM
+-- Server version: 10.4.11-MariaDB
+-- PHP Version: 7.4.4
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
 
@@ -25,7 +24,7 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `admin`
+-- Table structure for table `admin`
 --
 
 CREATE TABLE `admin` (
@@ -36,7 +35,7 @@ CREATE TABLE `admin` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Dumping data untuk tabel `admin`
+-- Dumping data for table `admin`
 --
 
 INSERT INTO `admin` (`id`, `nama`, `username`, `password`) VALUES
@@ -45,7 +44,7 @@ INSERT INTO `admin` (`id`, `nama`, `username`, `password`) VALUES
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `film`
+-- Table structure for table `film`
 --
 
 CREATE TABLE `film` (
@@ -65,7 +64,7 @@ CREATE TABLE `film` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Dumping data untuk tabel `film`
+-- Dumping data for table `film`
 --
 
 INSERT INTO `film` (`id_film`, `gambar`, `dimensi`, `usia`, `trailer`, `nama`, `kategori`, `durasi`, `produser`, `direktor`, `penulis`, `cast`, `deskripsi`) VALUES
@@ -80,7 +79,7 @@ INSERT INTO `film` (`id_film`, `gambar`, `dimensi`, `usia`, `trailer`, `nama`, `
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `theater`
+-- Table structure for table `theater`
 --
 
 CREATE TABLE `theater` (
@@ -92,7 +91,7 @@ CREATE TABLE `theater` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Dumping data untuk tabel `theater`
+-- Dumping data for table `theater`
 --
 
 INSERT INTO `theater` (`id`, `nama`, `alamat`, `telp`, `bioskop`) VALUES
@@ -102,23 +101,33 @@ INSERT INTO `theater` (`id`, `nama`, `alamat`, `telp`, `bioskop`) VALUES
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `transaksi_pembelian`
+-- Table structure for table `transaksi_pembelian`
 --
 
 CREATE TABLE `transaksi_pembelian` (
   `id_transaksi` int(5) NOT NULL,
+  `user` int(11) DEFAULT NULL,
+  `film` int(10) DEFAULT NULL,
   `bioskop` int(5) NOT NULL,
   `jam` time NOT NULL,
   `jumlah` int(5) NOT NULL,
-  `total` int(20) NOT NULL,
-  `kursi` varchar(3) NOT NULL,
-  `bayar` varchar(255) NOT NULL
+  `harga` int(10) NOT NULL,
+  `total` int(20) DEFAULT NULL,
+  `kursi` varchar(255) NOT NULL,
+  `bayar` enum('BNI','BRI','Gopay','Dana','OVO') NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `transaksi_pembelian`
+--
+
+INSERT INTO `transaksi_pembelian` (`id_transaksi`, `user`, `film`, `bioskop`, `jam`, `jumlah`, `harga`, `total`, `kursi`, `bayar`) VALUES
+(1, 10000, 8, 1, '00:00:15', 2, 30000, 60000, 'D6,D7', 'OVO');
 
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `user`
+-- Table structure for table `user`
 --
 
 CREATE TABLE `user` (
@@ -131,7 +140,7 @@ CREATE TABLE `user` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Dumping data untuk tabel `user`
+-- Dumping data for table `user`
 --
 
 INSERT INTO `user` (`id_user`, `nama`, `alamat`, `nohp`, `email`, `password`) VALUES
@@ -140,86 +149,91 @@ INSERT INTO `user` (`id_user`, `nama`, `alamat`, `nohp`, `email`, `password`) VA
 (10002, 'Siyam Marzuki', 'Jl. Pahlawan Bumi 12', '082123543142', 's.marzuki@gmail.com', 'siyam123'),
 (10003, 'Haris Jamal', 'Jl. Pandawa 5', '082199000123', 'haris@gmail.com', 'haris123'),
 (10004, 'Deni Cahyono', 'Jl. Kembar Jaya 12', '085678124555', 'deni.c@gmail.com', 'deni123'),
-(10006, 'Jamal Mudi', 'Jl. Kembang Kertas 12', '089111555666', 'jamal@gmail.com', 'jamal123');
+(10006, 'Jamal Mudi', 'Jl. Kembang Kertas 12', '089111555666', 'jamal@gmail.com', 'jamal123'),
+(10007, 'nuyus', 'jl ikan tombro', '08816254736', 'nuruslaily88@gmail.com', 'Nurus @8');
 
 --
 -- Indexes for dumped tables
 --
 
 --
--- Indeks untuk tabel `admin`
+-- Indexes for table `admin`
 --
 ALTER TABLE `admin`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indeks untuk tabel `film`
+-- Indexes for table `film`
 --
 ALTER TABLE `film`
   ADD PRIMARY KEY (`id_film`);
 
 --
--- Indeks untuk tabel `theater`
+-- Indexes for table `theater`
 --
 ALTER TABLE `theater`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indeks untuk tabel `transaksi_pembelian`
+-- Indexes for table `transaksi_pembelian`
 --
 ALTER TABLE `transaksi_pembelian`
   ADD PRIMARY KEY (`id_transaksi`),
-  ADD KEY `FK_transtheater` (`bioskop`);
+  ADD KEY `FK_transtheater` (`bioskop`),
+  ADD KEY `FK_user` (`user`),
+  ADD KEY `FK_film` (`film`);
 
 --
--- Indeks untuk tabel `user`
+-- Indexes for table `user`
 --
 ALTER TABLE `user`
   ADD PRIMARY KEY (`id_user`);
 
 --
--- AUTO_INCREMENT untuk tabel yang dibuang
+-- AUTO_INCREMENT for dumped tables
 --
 
 --
--- AUTO_INCREMENT untuk tabel `admin`
+-- AUTO_INCREMENT for table `admin`
 --
 ALTER TABLE `admin`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
--- AUTO_INCREMENT untuk tabel `film`
+-- AUTO_INCREMENT for table `film`
 --
 ALTER TABLE `film`
   MODIFY `id_film` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
--- AUTO_INCREMENT untuk tabel `theater`
+-- AUTO_INCREMENT for table `theater`
 --
 ALTER TABLE `theater`
   MODIFY `id` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
--- AUTO_INCREMENT untuk tabel `transaksi_pembelian`
+-- AUTO_INCREMENT for table `transaksi_pembelian`
 --
 ALTER TABLE `transaksi_pembelian`
-  MODIFY `id_transaksi` int(5) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_transaksi` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
--- AUTO_INCREMENT untuk tabel `user`
+-- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `id_user` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10007;
+  MODIFY `id_user` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10008;
 
 --
--- Ketidakleluasaan untuk tabel pelimpahan (Dumped Tables)
+-- Constraints for dumped tables
 --
 
 --
--- Ketidakleluasaan untuk tabel `transaksi_pembelian`
+-- Constraints for table `transaksi_pembelian`
 --
 ALTER TABLE `transaksi_pembelian`
-  ADD CONSTRAINT `FK_transtheater` FOREIGN KEY (`bioskop`) REFERENCES `theater` (`id`);
+  ADD CONSTRAINT `FK_film` FOREIGN KEY (`film`) REFERENCES `film` (`id_film`),
+  ADD CONSTRAINT `FK_transtheater` FOREIGN KEY (`bioskop`) REFERENCES `theater` (`id`),
+  ADD CONSTRAINT `FK_user` FOREIGN KEY (`user`) REFERENCES `user` (`id_user`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
